@@ -34,12 +34,15 @@ func main() {
 	}
 
 	doc.Find("body div#container div#contents div#main div#under div.searchResult").Each(func(i int, selection *goquery.Selection) {
+		// 大学名
 		collegeName := selection.Find("div.searchResult-list-name a").Text()
 		fmt.Println(strings.TrimSpace(collegeName))
 
+		// 都道府県・市町村・（国公立or私立）
 		collegeInfo := selection.Find("div.searchResult-list-info span.searchResult-list-profile").Text()
 		fmt.Println(collegeInfo)
 
+		// 学部・偏差値
 		selection.Find("div.searchResult-list-gakka ul div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
 			fmt.Println(strings.TrimSpace(selection.Text()))
 			fmt.Println(strings.TrimSpace(selection.Next().Text()))
