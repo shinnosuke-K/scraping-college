@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -33,8 +34,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-	itemNum := doc.Find("div.mod-pagerNum.mod-pagerNum__st span").First().Text()
+	itemNum, err := strconv.Atoi(doc.Find("div.mod-pagerNum.mod-pagerNum__st span").First().Text())
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(itemNum)
+
+	var pageNum int
+	if itemNum < 10 {
+		pageNum = 1
+	} else {
+		pageNum = itemNum/10 + 1
+	}
+
+	fmt.Println(pageNum)
 
 	doc.Find("body div#container div#contents div#main div#under div.searchResult").Each(func(i int, selection *goquery.Selection) {
 		// 大学名
