@@ -40,14 +40,9 @@ func main() {
 		collegeInfo := selection.Find("div.searchResult-list-info span.searchResult-list-profile").Text()
 		fmt.Println(collegeInfo)
 
-		selection.Find("div.searchResult-list-gakka ul").Each(func(i int, selection *goquery.Selection) {
-			selection.Find("div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
-				fmt.Println(strings.TrimSpace(selection.Text()))
-				selection.Parent().Find("div.searchResult-list-devi").Each(func(i int, selection *goquery.Selection) {
-					fmt.Println(strings.TrimSpace(selection.Text()))
-					fmt.Println()
-				})
-			})
+		selection.Find("div.searchResult-list-gakka ul div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
+			fmt.Println(strings.TrimSpace(selection.Text()))
+			fmt.Println(strings.TrimSpace(selection.Next().Text()))
 		})
 	})
 }
