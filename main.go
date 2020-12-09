@@ -33,6 +33,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	pageNum := doc.Find("div.mod-pagerNum.mod-pagerNum__st span").First().Text()
+	fmt.Println(pageNum)
+
 	doc.Find("body div#container div#contents div#main div#under div.searchResult").Each(func(i int, selection *goquery.Selection) {
 		// 大学名
 		collegeName := selection.Find("div.searchResult-list-name a").Text()
