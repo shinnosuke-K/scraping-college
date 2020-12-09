@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
+	"net/http"
 	"os"
+	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -12,5 +16,38 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(os.Getenv("URL"))
+	url := os.Getenv("URL")
+	res, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	doc.Find("body div#container div#contents div#main div#under div.searchResult").Each(func(i int, selection *goquery.Selection) {
+		collegeName := selection.Find("div.searchResult-list-name a").Text()
+		fmt.Println(strings.TrimSpace(collegeName))
+
+		collegeInfo := selection.Find("div.searchResult-list-info span.searchResult-list-profile").Text()
+		fmt.Println(collegeInfo)
+
+		selection.Find("div.searchResult-list-gakka ul").Each(func(i int, selection *goquery.Selection) {
+			selection.Find("div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
+				fmt.Println(strings.TrimSpace(selection.Text()))
+				selection.Parent().Find("div.searchResult-list-devi").Each(func(i int, selection *goquery.Selection) {
+					fmt.Println(strings.TrimSpace(selection.Text()))
+					fmt.Println()
+				})
+			})
+		})
+	})
 }
