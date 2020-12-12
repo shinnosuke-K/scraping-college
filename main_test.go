@@ -66,3 +66,48 @@ func TestGetPageNum(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckStatus(t *testing.T) {
+	type args struct {
+		statusCode int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name:    "StatusOK",
+			args:    args{statusCode: 200},
+			wantErr: false,
+		},
+		{
+			name:    "StatusContinue",
+			args:    args{statusCode: 100},
+			wantErr: true,
+		},
+		{
+			name:    "StatusMultipleChoices",
+			args:    args{statusCode: 300},
+			wantErr: true,
+		},
+		{
+			name:    "StatusBadRequest",
+			args:    args{statusCode: 400},
+			wantErr: true,
+		},
+		{
+			name:    "StatusInternalServerError",
+			args:    args{statusCode: 500},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := CheckStatus(tt.args.statusCode); (err != nil) != tt.wantErr {
+				t.Errorf("CheckStatus() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
