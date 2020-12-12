@@ -12,6 +12,16 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func GetPageNum(itemNum int) int {
+	if itemNum <= 10 {
+		return 1
+	} else if itemNum%10 == 0 {
+		return itemNum / 10
+	} else {
+		return itemNum/10 + 1
+	}
+}
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
@@ -40,13 +50,7 @@ func main() {
 	}
 	fmt.Println(itemNum)
 
-	var pageNum int
-	if itemNum < 10 {
-		pageNum = 1
-	} else {
-		pageNum = itemNum/10 + 1
-	}
-
+	pageNum := GetPageNum(itemNum)
 	fmt.Println(pageNum)
 
 	doc.Find("body div#container div#contents div#main div#under div.searchResult").Each(func(i int, selection *goquery.Selection) {
@@ -54,14 +58,14 @@ func main() {
 		collegeName := selection.Find("div.searchResult-list-name a").Text()
 		fmt.Println(strings.TrimSpace(collegeName))
 
-		// 都道府県・市町村・（国公立or私立）
-		collegeInfo := selection.Find("div.searchResult-list-info span.searchResult-list-profile").Text()
-		fmt.Println(collegeInfo)
-
-		// 学部・偏差値
-		selection.Find("div.searchResult-list-gakka ul div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
-			fmt.Println(strings.TrimSpace(selection.Text()))
-			fmt.Println(strings.TrimSpace(selection.Next().Text()))
-		})
+		//// 都道府県・市町村・（国公立or私立）
+		//collegeInfo := selection.Find("div.searchResult-list-info span.searchResult-list-profile").Text()
+		//fmt.Println(collegeInfo)
+		//
+		//// 学部・偏差値
+		//selection.Find("div.searchResult-list-gakka ul div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
+		//	fmt.Println(strings.TrimSpace(selection.Text()))
+		//	fmt.Println(strings.TrimSpace(selection.Next().Text()))
+		//})
 	})
 }
