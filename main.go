@@ -79,4 +79,8 @@ func main() {
 		rand.Seed(time.Now().Unix())
 		time.Sleep(time.Millisecond * time.Duration(100*rand.Intn(10)))
 	}
+
+	if err := c.Save(pref); err != nil {
+		log.Fatal(err)
+	}
 }
