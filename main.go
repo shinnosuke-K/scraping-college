@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/shinnosuke-K/scraping-college/college"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/joho/godotenv"
@@ -27,35 +28,6 @@ func CheckStatus(statusCode int) error {
 	if statusCode != http.StatusOK {
 		return fmt.Errorf("status code error: %d", statusCode)
 	}
-	return nil
-}
-
-func ExtractCollegeInfo(res *http.Response) error {
-	defer res.Body.Close()
-	if err := CheckStatus(res.StatusCode); err != nil {
-		return err
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		return err
-	}
-
-	doc.Find("body div#container div#contents div#main div#under div.searchResult").Each(func(i int, selection *goquery.Selection) {
-		// 大学名
-		collegeName := selection.Find("div.searchResult-list-name a").Text()
-		fmt.Println(strings.TrimSpace(collegeName))
-
-		//// 都道府県・市町村・（国公立or私立）
-		//collegeInfo := selection.Find("div.searchResult-list-info span.searchResult-list-profile").Text()
-		//fmt.Println(collegeInfo)
-		//
-		//// 学部・偏差値
-		//selection.Find("div.searchResult-list-gakka ul div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
-		//	fmt.Println(strings.TrimSpace(selection.Text()))
-		//	fmt.Println(strings.TrimSpace(selection.Next().Text()))
-		//})
-	})
 	return nil
 }
 
@@ -88,6 +60,8 @@ func main() {
 
 	pageNum := GetPageNum(itemNum)
 	pref := "osaka"
+
+	c := college.New()
 	for n := 1; n <= pageNum; n++ {
 		url = fmt.Sprintf("https://www.minkou.jp/university/search/pref=%s/page=%d/", pref, n)
 
@@ -96,7 +70,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if err := ExtractCollegeInfo(res); err != nil {
+		if err := c.ExtractCollegeInfo(res); err != nil {
 			log.Fatal(err)
 		}
 
