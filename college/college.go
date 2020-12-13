@@ -1,8 +1,10 @@
 package college
 
 import (
+	"encoding/csv"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -68,5 +70,38 @@ func (c *Colleges) ExtractCollegeInfo(res *http.Response) error {
 			})
 		})
 	})
+	return nil
+}
+
+func (c *Colleges) Save(name string) error {
+	filePath := fmt.Sprintf("./data/%s.csv", name)
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	csvFile := csv.NewWriter(file)
+	for _, c := range c.College {
+		err := csvFile.Write([]string{
+			c.Name,
+			c.Depart,
+			c.Deviation,
+			c.Pref,
+			c.City,
+			c.Station,
+			c.Corp,
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	csvFile.Flush()
+	if err := csvFile.Error(); err != nil {
+		return err
+	}
+
 	return nil
 }
