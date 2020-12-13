@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -75,6 +76,7 @@ func main() {
 		}
 
 		// 時間稼ぎ
-		time.Sleep(time.Millisecond * 500)
+		rand.Seed(time.Now().Unix())
+		time.Sleep(time.Millisecond * time.Duration(100*rand.Intn(10)))
 	}
 }
