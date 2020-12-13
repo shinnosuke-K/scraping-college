@@ -61,8 +61,8 @@ func (c *Colleges) ExtractCollegeInfo(res *http.Response) error {
 				Name:      collegeName,
 				Pref:      address[0],
 				City:      address[1],
-				Station:   collegeInfo[1],
-				Corp:      collegeInfo[2],
+				Station:   strings.TrimSpace(collegeInfo[1]),
+				Corp:      strings.TrimSpace(collegeInfo[2]),
 				Depart:    depart,
 				Deviation: deviation,
 			})
