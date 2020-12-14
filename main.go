@@ -20,9 +20,8 @@ func GetPageNum(itemNum int) int {
 		return 1
 	} else if itemNum%10 == 0 {
 		return itemNum / 10
-	} else {
-		return itemNum/10 + 1
 	}
+	return itemNum/10 + 1
 }
 
 func CheckStatus(statusCode int) error {
