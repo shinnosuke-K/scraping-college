@@ -24,6 +24,31 @@ func GetPageNum(itemNum int) int {
 	return itemNum/10 + 1
 }
 
+func GetItemNum(url string) (int, error) {
+	res, err := http.Get(url)
+	if err != nil {
+		return 0, err
+	}
+
+	defer res.Body.Close()
+
+	if err := CheckStatus(res.StatusCode); err != nil {
+		return 0, err
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	num, err := strconv.Atoi(doc.Find("div.mod-pagerNum.mod-pagerNum__st span").First().Text())
+	if err != nil {
+		return 0, err
+	}
+
+	return num, nil
+}
+
 func CheckStatus(statusCode int) error {
 	if statusCode != http.StatusOK {
 		return fmt.Errorf("status code error: %d", statusCode)
@@ -39,29 +64,13 @@ func main() {
 	pref := "osaka"
 	parseURL := os.Getenv("URL")
 	url := fmt.Sprintf(parseURL, pref, 1)
-	res, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	defer res.Body.Close()
-
-	if err := CheckStatus(res.StatusCode); err != nil {
-		log.Fatalf("%e %s", err, res.Status)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	itemNum, err := strconv.Atoi(doc.Find("div.mod-pagerNum.mod-pagerNum__st span").First().Text())
+	itemNum, err := GetItemNum(url)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	pageNum := GetPageNum(itemNum)
-
 	c := college.New()
 	for n := 1; n <= pageNum; n++ {
 		url = fmt.Sprintf(parseURL, pref, n)
