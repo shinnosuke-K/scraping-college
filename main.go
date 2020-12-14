@@ -37,7 +37,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	url := os.Getenv("URL")
+	pref := "osaka"
+	parseURL := os.Getenv("URL")
+	url := fmt.Sprintf(parseURL, pref, 1)
 	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -60,11 +62,10 @@ func main() {
 	}
 
 	pageNum := GetPageNum(itemNum)
-	pref := "osaka"
 
 	c := college.New()
 	for n := 1; n <= pageNum; n++ {
-		url = fmt.Sprintf("https://www.minkou.jp/university/search/pref=%s/page=%d/", pref, n)
+		url = fmt.Sprintf(parseURL, pref, n)
 
 		res, err = http.Get(url)
 		if err != nil {
