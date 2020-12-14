@@ -46,8 +46,8 @@ func main() {
 
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
-		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+	if err := CheckStatus(res.StatusCode); err != nil {
+		log.Fatalf("%e %s", err, res.Status)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
