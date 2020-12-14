@@ -26,7 +26,12 @@ func New() *Colleges {
 	return &Colleges{}
 }
 
-func (c *Colleges) ExtractCollegeInfo(res *http.Response) error {
+func (c *Colleges) ExtractCollegeInfo(url string) error {
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
 		return fmt.Errorf("status code error: %d", res.StatusCode)

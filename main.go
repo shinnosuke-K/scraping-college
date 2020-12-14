@@ -75,12 +75,7 @@ func main() {
 	for n := 1; n <= pageNum; n++ {
 		url = fmt.Sprintf(parseURL, pref, n)
 
-		res, err = http.Get(url)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if err := c.ExtractCollegeInfo(res); err != nil {
+		if err := c.ExtractCollegeInfo(url); err != nil {
 			log.Fatal(err)
 		}
 
