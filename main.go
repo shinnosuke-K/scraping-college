@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/shinnosuke-K/scraping-college/college"
+	"github.com/shinnosuke-K/scraping-college/prefectures"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/joho/godotenv"
@@ -61,30 +62,33 @@ func main() {
 		log.Fatal(err)
 	}
 
-	pref := "osaka"
 	parseURL := os.Getenv("URL")
-	url := fmt.Sprintf(parseURL, pref, 1)
 
-	itemNum, err := GetItemNum(url)
-	if err != nil {
-		log.Fatal(err)
-	}
+	for _, pref := range prefectures.List {
+		fmt.Println(pref)
+		url := fmt.Sprintf(parseURL, pref, 1)
 
-	pageNum := GetPageNum(itemNum)
-	c := college.New()
-	for n := 1; n <= pageNum; n++ {
-		url = fmt.Sprintf(parseURL, pref, n)
-
-		if err := c.ExtractCollegeInfo(url); err != nil {
+		itemNum, err := GetItemNum(url)
+		if err != nil {
 			log.Fatal(err)
 		}
 
-		// 時間稼ぎ
-		rand.Seed(time.Now().Unix())
-		time.Sleep(time.Millisecond * time.Duration(100*rand.Intn(10)))
-	}
+		pageNum := GetPageNum(itemNum)
+		c := college.New()
+		for n := 1; n <= pageNum; n++ {
+			url = fmt.Sprintf(parseURL, pref, n)
 
-	if err := c.Save(pref); err != nil {
-		log.Fatal(err)
+			if err := c.ExtractCollegeInfo(url); err != nil {
+				log.Fatal(err)
+			}
+
+			// 時間稼ぎ
+			rand.Seed(time.Now().Unix())
+			time.Sleep(time.Millisecond * time.Duration(100*rand.Intn(10)))
+		}
+
+		if err := c.Save(pref); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
