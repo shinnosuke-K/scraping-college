@@ -54,7 +54,7 @@ func (c *Colleges) ExtractCollegeInfo(url string) error {
 		// 学部・偏差値
 		selection.Find("div.searchResult-list-gakka ul div.searchResult-list-gakubu").Each(func(i int, selection *goquery.Selection) {
 			depart := strings.TrimSpace(selection.Text())
-			deviation := strings.TrimSpace(selection.Next().Text())
+			deviation := strings.Replace(strings.TrimSpace(selection.Next().Text()), "偏差値", "", 1)
 
 			c.College = append(c.College, struct {
 				Name      string
